@@ -3,42 +3,49 @@ package co.tomlee.guava.services.nifty;
 import com.facebook.nifty.core.*;
 import com.google.common.util.concurrent.AbstractIdleService;
 import org.apache.thrift.TProcessor;
+import org.apache.thrift.protocol.TCompactProtocol;
+import org.apache.thrift.protocol.TProtocolFactory;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.util.HashedWheelTimer;
 
 public class NiftyService extends AbstractIdleService {
-    public static final int DEFAULT_BOSS_THREAD_COUNT = 8;
-    public static final int DEFAULT_WORKER_THREAD_COUNT = 256;
+    public static final NettyServerConfig DEFAULT_NETTY_SERVER_CONFIG =
+        new NettyServerConfigBuilder()
+            .setBossThreadCount(8)
+            .setWorkerThreadCount(256)
+            .build();
 
-    private final TProcessor processor;
-
-    private final int bossThreadCount;
-    private final int workerThreadCount;
+    private final NettyServerConfig nettyServerConfig;
+    private final ThriftServerDef thriftServerDef;
 
     private NettyServerTransport serverTransport;
 
     public NiftyService(final TProcessor processor) {
-        this(processor, DEFAULT_BOSS_THREAD_COUNT, DEFAULT_WORKER_THREAD_COUNT);
+        this(processor, 8080);
+    }
+    
+    public NiftyService(final TProcessor processor, final int port) {
+        this(new ThriftServerDefBuilder()
+                .withProcessor(processor)
+                .protocol(new TCompactProtocol.Factory())
+                .listen(port)
+                .build());
     }
 
-    public NiftyService(final TProcessor processor,
-                        final int bossThreadCount,
-                        final int workerThreadCount) {
-        this.processor = processor;
-        this.bossThreadCount = bossThreadCount;
-        this.workerThreadCount = workerThreadCount;
+    public NiftyService(final ThriftServerDef thriftServerDef) {
+        this(DEFAULT_NETTY_SERVER_CONFIG, thriftServerDef);
+    }
+
+    public NiftyService(final NettyServerConfig nettyServerConfig,
+                        final ThriftServerDef thriftServerDef) {
+        this.nettyServerConfig = nettyServerConfig;
+        this.thriftServerDef = thriftServerDef;
     }
 
     @Override
     protected void startUp() throws Exception {
-        final ThriftServerDef serverDef = new ThriftServerDefBuilder().withProcessor(processor).build();
-
-        serverTransport = new NettyServerTransport(serverDef,
-                                                   new NettyServerConfigBuilder()
-                                                       .setBossThreadCount(bossThreadCount)
-                                                       .setWorkerThreadCount(workerThreadCount)
-                                                       .setTimer(new HashedWheelTimer())
-                                                       .build(),
+        serverTransport = new NettyServerTransport(thriftServerDef,
+                                                   nettyServerConfig,
                                                    new DefaultChannelGroup());
         serverTransport.start();
     }
