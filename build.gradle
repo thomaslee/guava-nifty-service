@@ -1,0 +1,74 @@
+// vim: ft=groovy:sw=4:ts=4:expandtab
+
+apply plugin: 'java'
+apply plugin: 'release'
+apply plugin: 'maven'
+apply plugin: 'nexus'
+apply plugin: 'idea'
+
+group = 'co.tomlee.guava.services'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    
+    dependencies {
+        classpath 'co.tomlee.gradle.plugins:gradle-release-plugin:0.0.3'
+        classpath 'org.gradle.api.plugins:gradle-nexus-plugin:0.3'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    provided
+    compile {
+        extendsFrom provided
+    }
+}
+
+dependencies {
+    compile 'com.facebook.nifty:nifty-core:0.13.1'
+    provided 'org.apache.thrift:libthrift:0.9.1'
+    compile 'com.google.guava:guava:17.0'
+}
+
+nexus {
+    sign = true
+}
+
+modifyPom {
+  project {
+    name 'guava-nifty-service'
+    description 'Guava service wrapper for Facebook\'s Nifty'
+    url 'https://github.com/thomaslee/guava-nifty-service'
+    inceptionYear '2014'
+
+    scm {
+      url 'https://github.com/thomaslee/guava-nifty-service'
+      connection 'scm:git://github.com/thomaslee/guava-nifty-service.git'
+      developerConnection 'scm:git@github.com:thomaslee/guava-nifty-service.git'
+    }
+
+    licenses {
+      license {
+        name 'Apache License 2.0'
+        url 'http://opensource.org/licenses/Apache-2.0'
+        distribution 'repo'
+      }
+    }
+
+    developers {
+      developer {
+        id 'thomaslee'
+        name 'Tom Lee'
+        email 'github@tomlee.co'
+      }
+    }
+  }
+}
+
