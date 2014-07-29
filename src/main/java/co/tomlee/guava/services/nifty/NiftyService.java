@@ -7,6 +7,9 @@ import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.util.HashedWheelTimer;
 
 public class NiftyService extends AbstractIdleService {
+    public static final int DEFAULT_BOSS_THREAD_COUNT = 8;
+    public static final int DEFAULT_WORKER_THREAD_COUNT = 256;
+
     private final TProcessor processor;
 
     private final int bossThreadCount;
@@ -15,7 +18,7 @@ public class NiftyService extends AbstractIdleService {
     private NettyServerTransport serverTransport;
 
     public NiftyService(final TProcessor processor) {
-        this(processor, 8, 256);
+        this(processor, DEFAULT_BOSS_THREAD_COUNT, DEFAULT_WORKER_THREAD_COUNT);
     }
 
     public NiftyService(final TProcessor processor,
