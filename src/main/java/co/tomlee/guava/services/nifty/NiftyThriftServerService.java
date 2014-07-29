@@ -4,11 +4,9 @@ import com.facebook.nifty.core.*;
 import com.google.common.util.concurrent.AbstractIdleService;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TCompactProtocol;
-import org.apache.thrift.protocol.TProtocolFactory;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
-import org.jboss.netty.util.HashedWheelTimer;
 
-public class NiftyService extends AbstractIdleService {
+public class NiftyThriftServerService extends AbstractIdleService {
     public static final NettyServerConfig DEFAULT_NETTY_SERVER_CONFIG =
         new NettyServerConfigBuilder()
             .setBossThreadCount(8)
@@ -20,11 +18,11 @@ public class NiftyService extends AbstractIdleService {
 
     private NettyServerTransport serverTransport;
 
-    public NiftyService(final TProcessor processor) {
+    public NiftyThriftServerService(final TProcessor processor) {
         this(processor, 8080);
     }
-    
-    public NiftyService(final TProcessor processor, final int port) {
+
+    public NiftyThriftServerService(final TProcessor processor, final int port) {
         this(new ThriftServerDefBuilder()
                 .withProcessor(processor)
                 .protocol(new TCompactProtocol.Factory())
@@ -32,12 +30,12 @@ public class NiftyService extends AbstractIdleService {
                 .build());
     }
 
-    public NiftyService(final ThriftServerDef thriftServerDef) {
+    public NiftyThriftServerService(final ThriftServerDef thriftServerDef) {
         this(DEFAULT_NETTY_SERVER_CONFIG, thriftServerDef);
     }
 
-    public NiftyService(final NettyServerConfig nettyServerConfig,
-                        final ThriftServerDef thriftServerDef) {
+    public NiftyThriftServerService(final NettyServerConfig nettyServerConfig,
+                                    final ThriftServerDef thriftServerDef) {
         this.nettyServerConfig = nettyServerConfig;
         this.thriftServerDef = thriftServerDef;
     }

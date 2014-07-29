@@ -33,6 +33,7 @@ configurations {
 
 dependencies {
     compile 'com.facebook.nifty:nifty-core:0.13.1'
+    compile 'com.facebook.nifty:nifty-client:0.13.1'
     provided 'org.apache.thrift:libthrift:0.9.1'
     compile 'com.google.guava:guava:17.0'
 }
