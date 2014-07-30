@@ -4,6 +4,7 @@ import com.facebook.nifty.client.FramedClientConnector;
 import com.facebook.nifty.client.NettyClientConfig;
 import com.facebook.nifty.client.NettyClientConfigBuilder;
 import com.facebook.nifty.client.NiftyClient;
+import com.facebook.nifty.duplex.TDuplexProtocolFactory;
 import com.google.common.net.HostAndPort;
 import com.google.common.util.concurrent.AbstractIdleService;
 import org.apache.thrift.TServiceClient;
@@ -49,13 +50,15 @@ public class NiftyThriftClientService<T extends TServiceClient> extends Abstract
     }
 
     public T newClient(final InetSocketAddress inetSocketAddress) throws TTransportException, InterruptedException {
-        final FramedClientConnector framedClientConnector = new FramedClientConnector(inetSocketAddress);
+        final TDuplexProtocolFactory duplexProtocolFactory = TDuplexProtocolFactory.fromSingleFactory(protocolFactory);
+        final FramedClientConnector framedClientConnector = new FramedClientConnector(inetSocketAddress, duplexProtocolFactory);
         final TProtocol protocol = protocolFactory.getProtocol(niftyClient.connectSync(type, framedClientConnector));
         return serviceClientFactory.getClient(protocol);
     }
 
     public T newClient(final HostAndPort hostAndPort) throws TTransportException, InterruptedException {
-        final FramedClientConnector framedClientConnector = new FramedClientConnector(hostAndPort);
+        final TDuplexProtocolFactory duplexProtocolFactory = TDuplexProtocolFactory.fromSingleFactory(protocolFactory);
+        final FramedClientConnector framedClientConnector = new FramedClientConnector(hostAndPort, duplexProtocolFactory);
         final TProtocol protocol = protocolFactory.getProtocol(niftyClient.connectSync(type, framedClientConnector));
         return serviceClientFactory.getClient(protocol);
     }
