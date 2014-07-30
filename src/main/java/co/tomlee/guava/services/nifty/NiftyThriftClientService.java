@@ -59,4 +59,8 @@ public class NiftyThriftClientService<T extends TServiceClient> extends Abstract
         final TProtocol protocol = protocolFactory.getProtocol(niftyClient.connectSync(type, framedClientConnector));
         return serviceClientFactory.getClient(protocol);
     }
+
+    public T newClient(final String host, final int port) throws TTransportException, InterruptedException {
+        return newClient(HostAndPort.fromParts(host, port));
+    }
 }
