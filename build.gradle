@@ -8,6 +8,9 @@ apply plugin: 'idea'
 
 group = 'co.tomlee.guava.services'
 
+sourceCompatibility = 1.7
+targetCompatibility = 1.7
+
 buildscript {
     repositories {
         mavenCentral()
