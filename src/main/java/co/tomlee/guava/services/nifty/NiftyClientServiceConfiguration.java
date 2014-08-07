@@ -14,7 +14,7 @@ public final class NiftyClientServiceConfiguration<T extends TServiceClient> {
     final Class<T> clientType;
     final TServiceClientFactory<T> clientFactory;
     NettyClientConfig nettyConfig = new NettyClientConfigBuilder().build();
-    TProtocolFactory protocolFactory = new TCompactProtocol.Factory(NiftySericeDefaults.MAX_FRAME_SIZE);
+    TProtocolFactory protocolFactory = new TCompactProtocol.Factory(NiftyServiceDefaults.MAX_FRAME_SIZE);
     Duration connectTimeout = new Duration(2, TimeUnit.SECONDS);
     Duration receiveTimeout = new Duration(10, TimeUnit.SECONDS);
     Duration sendTimeout = new Duration(5, TimeUnit.SECONDS);

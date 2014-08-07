@@ -9,7 +9,7 @@ import org.apache.thrift.protocol.TCompactProtocol;
 
 public final class NiftyServerServiceConfiguration {
     private ThriftServerDefBuilder serverDefBuilder = new ThriftServerDefBuilder()
-                                                        .protocol(new TCompactProtocol.Factory(NiftySericeDefaults.MAX_FRAME_SIZE))
+                                                        .protocol(new TCompactProtocol.Factory(NiftyServiceDefaults.MAX_FRAME_SIZE))
                                                         .listen(3210);
 
     private NettyServerConfigBuilder serverConfigBuilder = new NettyServerConfigBuilder()
