@@ -1,6 +1,6 @@
 package co.tomlee.guava.services.nifty;
 
-import com.facebook.nifty.core.*;
+import com.facebook.nifty.core.NettyServerTransport;
 import com.google.common.util.concurrent.AbstractIdleService;
 import org.apache.thrift.TProcessor;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
@@ -32,7 +32,9 @@ public class NiftyServerService extends AbstractIdleService {
 
     @Override
     protected void shutDown() throws Exception {
-        serverTransport.stop();
-        serverTransport = null;
+        if (serverTransport != null) {
+            serverTransport.stop();
+            serverTransport = null;
+        }
     }
 }

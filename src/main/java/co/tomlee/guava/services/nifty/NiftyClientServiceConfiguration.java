@@ -13,12 +13,15 @@ import java.util.concurrent.TimeUnit;
 public final class NiftyClientServiceConfiguration<T extends TServiceClient> {
     final Class<T> clientType;
     final TServiceClientFactory<T> clientFactory;
-    NettyClientConfig nettyConfig = new NettyClientConfigBuilder().build();
+    NettyClientConfigBuilder clientConfigBuilder = new NettyClientConfigBuilder()
+                                                        .setBossThreadCount(4)
+                                                        .setWorkerThreadCount(128);
+
     TProtocolFactory protocolFactory = new TCompactProtocol.Factory(NiftyServiceDefaults.MAX_FRAME_SIZE);
     Duration connectTimeout = new Duration(2, TimeUnit.SECONDS);
     Duration receiveTimeout = new Duration(10, TimeUnit.SECONDS);
     Duration sendTimeout = new Duration(5, TimeUnit.SECONDS);
-    int defaultPort = 3210;
+    int defaultPort = NiftyServiceDefaults.PORT;
 
     public NiftyClientServiceConfiguration(final Class<T> clientType, final TServiceClientFactory<T> clientFactory) {
         this.clientType = clientType;
@@ -30,8 +33,13 @@ public final class NiftyClientServiceConfiguration<T extends TServiceClient> {
         return this;
     }
 
-    public NiftyClientServiceConfiguration nettyConfig(final NettyClientConfig nettyConfig) {
-        this.nettyConfig = nettyConfig;
+    public NiftyClientServiceConfiguration bossThreads(final int bossThreads) {
+        clientConfigBuilder.setBossThreadCount(bossThreads);
+        return this;
+    }
+
+    public NiftyClientServiceConfiguration workerThreads(final int workerThreads) {
+        clientConfigBuilder.setWorkerThreadCount(workerThreads);
         return this;
     }
 
@@ -53,5 +61,9 @@ public final class NiftyClientServiceConfiguration<T extends TServiceClient> {
     public NiftyClientServiceConfiguration sendTimeout(final int timeout, final TimeUnit unit) {
         sendTimeout = new Duration(timeout, unit);
         return this;
+    }
+
+    NettyClientConfig clientConfig() {
+        return clientConfigBuilder.build();
     }
 }

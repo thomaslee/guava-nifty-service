@@ -31,13 +31,15 @@ public class NiftyClientService<T extends TServiceClient> extends AbstractIdleSe
 
     @Override
     protected void startUp() throws Exception {
-        niftyClient = new NiftyClient(configuration.nettyConfig);
+        niftyClient = new NiftyClient(configuration.clientConfig());
     }
 
     @Override
     protected void shutDown() throws Exception {
-        niftyClient.close();
-        niftyClient = null;
+        if (niftyClient != null) {
+            niftyClient.close();
+            niftyClient = null;
+        }
     }
 
     public T newClient(final InetSocketAddress inetSocketAddress) throws TTransportException, InterruptedException {
